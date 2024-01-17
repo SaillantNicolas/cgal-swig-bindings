@@ -23,7 +23,7 @@ jobs:
       - name: Set matrix output
         id: set-matrix
         run: |
-          MATRIX_JSON=$(cat matrix.json)
+          MATRIX_JSON=$(cat .github/workflows/matrix.json)
           echo "MATRIX_JSON=$MATRIX_JSON" >> $GITHUB_ENV
           echo "matrix=$MATRIX_JSON" >> $GITHUB_OUTPUT
   sdist:
