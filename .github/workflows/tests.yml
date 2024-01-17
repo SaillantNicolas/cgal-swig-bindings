@@ -184,8 +184,8 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: endsWith(matrix.cgal_branch, env.LATEST_CGAL_VERSION)
         with:
-          name: artifact
-          path: dist
+          name: wheel-${{ matrix.os }}-${{ matrix.cgal_branch }}-${{ matrix.python-version }}
+          path: cgal-*.whl
 
   test-wheel:
     name: Test Wheel
@@ -201,9 +201,6 @@ jobs:
 
       - name: Download Wheel Artifact
         uses: actions/download-artifact@v3
-        with:
-          name: artifact
-          path: dist
 
       - name: Install Wheel and Test
         run: |
