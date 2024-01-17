@@ -22,7 +22,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set matrix output
         id: set-matrix
-        run: echo "::set-output name=matrix::$(cat matrix.json)"
+        run: |
+          MATRIX_JSON=$(cat matrix.json)
+          echo "MATRIX_JSON=$MATRIX_JSON" >> $GITHUB_ENV
+          echo "matrix=$MATRIX_JSON" >> $GITHUB_OUTPUT
   sdist:
     name: Create Source Distribution
     runs-on: ubuntu-latest
