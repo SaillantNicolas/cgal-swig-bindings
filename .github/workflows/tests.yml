@@ -185,7 +185,7 @@ jobs:
         if: endsWith(matrix.cgal_branch, env.LATEST_CGAL_VERSION)
         with:
           name: artifact
-          path: cgal-*.whl
+          path: dist
 
   test-wheel:
     name: Test Wheel
