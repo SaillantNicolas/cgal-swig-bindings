@@ -202,6 +202,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: dist
+          merge-multiple: true
 
       - name: List downloaded wheels
         run: ls -l dist/
@@ -211,7 +212,7 @@ jobs:
           set -ex
           python -m venv cgal_venv
           source cgal_venv/bin/activate
-          python -m pip install dist/cgal-*/cgal-*.whl
+          python -m pip install dist/cgal-*.whl
           cd examples/python
           for i in *.py; do
             python $i
