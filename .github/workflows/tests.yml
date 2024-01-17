@@ -203,6 +203,9 @@ jobs:
         with:
           path: dist
 
+      - name: List downloaded wheels
+        run: ls -l dist/
+
       - name: Install Wheel and Test
         run: |
           set -ex
