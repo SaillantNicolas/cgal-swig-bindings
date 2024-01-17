@@ -51,14 +51,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        #cgal_branch: [v5.6, 5.6.x-branch, master]
-        cgal_branch: [v5.6]
-        #python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
-        python-version: ["3.8"]
-        #os: [ubuntu-latest, macos-latest, windows-latest]
+        cgal_branch: [v5.6, 5.6.x-branch, master]
+        #cgal_branch: [v5.5]
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+        #python-version: ["3.9"]
+        os: [ubuntu-latest, macos-latest, windows-latest]
         #os: [macos-latest]
         #os: [windows-latest]
-        os: [ubuntu-latest]
+        #os: [ubuntu-latest]
 
     steps:
       - uses: actions/checkout@v4
@@ -191,6 +191,17 @@ jobs:
     name: Test Wheel
     needs: build-and-test-wheels
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        cgal_branch: [v5.6, 5.6.x-branch, master]
+        #cgal_branch: [v5.5]
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+        #python-version: ["3.9"]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        #os: [macos-latest]
+        #os: [windows-latest]
+        #os: [ubuntu-latest]
     steps:
       - uses: actions/checkout@v4
 
@@ -221,7 +232,7 @@ jobs:
   upload:
     name: Upload to PyPI
     runs-on: ubuntu-latest
-    needs: [sdist, build-and-test-wheels]
+    needs: [sdist, build-and-test-wheels, test-wheel]
     steps:
       - uses: actions/download-artifact@v4
         with:
