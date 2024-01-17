@@ -23,9 +23,9 @@ jobs:
       - name: Set matrix output
         id: set-matrix
         run: |
-          MATRIX_JSON=$(cat .github/workflows/matrix.json)
-          echo "MATRIX_JSON=$MATRIX_JSON" >> $GITHUB_ENV
-          echo "matrix=$MATRIX_JSON" >> $GITHUB_OUTPUT
+          MATRIX_JSON=$(jq -c . < .github/workflows/matrix.json)
+          echo "MATRIX_JSON=${MATRIX_JSON}" >> $GITHUB_ENV
+          echo "matrix=${MATRIX_JSON}" >> $GITHUB_OUTPUT
   sdist:
     name: Create Source Distribution
     runs-on: ubuntu-latest
