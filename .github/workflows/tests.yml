@@ -208,11 +208,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.8'
+          python-version: ${{ matrix.python-version }}
 
       - uses: actions/download-artifact@v4
         with:
           path: dist
+          name: wheel-${{ matrix.os }}-${{ matrix.cgal_branch }}-${{ matrix.python-version }}
           merge-multiple: true
 
       - name: List downloaded wheels
