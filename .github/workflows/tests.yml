@@ -199,8 +199,9 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Download Wheel Artifact
-        uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
 
       - name: Install Wheel and Test
         run: |
