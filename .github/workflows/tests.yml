@@ -181,27 +181,40 @@ jobs:
           unzip -l cgal-*whl
           python -m twine check cgal-*whl
 
-      - name: Install wheel and test it
-        shell: bash -l {0}
+      - uses: actions/upload-artifact@v4
+        if: endsWith(matrix.cgal_branch, env.LATEST_CGAL_VERSION)
+        with:
+          name: artifact
+          path: cgal-*.whl
+
+  test-wheel:
+    name: Test Wheel
+    needs: build-and-test-wheels
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Download Wheel Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: artifact
+          path: dist
+
+      - name: Install Wheel and Test
         run: |
           set -ex
           python -m venv cgal_venv
-          case ${{ runner.os }} in
-            Windows) cgal_venv/Scripts/activate
-                      ;;
-            *) source cgal_venv/bin/activate
-          esac
-          python -m pip install cgal-*.whl
+          source cgal_venv/bin/activate
+          python -m pip install dist/cgal-*.whl
           cd examples/python
           for i in *.py; do
             python $i
           done
-
-      - uses: actions/upload-artifact@v4
-        if: endsWith(matrix.cgal_branch, env.LATEST_CGAL_VERSION)
-        with:
-          name: wheel-${{ matrix.os }}-${{ matrix.cgal_branch }}-${{ matrix.python-version }}
-          path: cgal-*.whl
 
   upload:
     name: Upload to PyPI
