@@ -13,6 +13,16 @@ env:
   LATEST_CGAL_VERSION: '5.6'
 
 jobs:
+  prepare-matrix:
+    name: Prepare Matrix
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set matrix output
+        id: set-matrix
+        run: echo "::set-output name=matrix::$(cat matrix.json)"
   sdist:
     name: Create Source Distribution
     runs-on: ubuntu-latest
@@ -47,19 +57,16 @@ jobs:
 
   build-and-test-wheels:
     name: Wheel
+    needs: prepare-matrix
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
-      matrix:
-        include: ${{fromJson(steps.read-matrix.outputs.matrix)}}
-    runs-on: ${{ matrix.os }}
+      matrix: ${{fromJson(needs.prepare-matrix.outputs.matrix)}}
 
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
-      - name: Read matrix file
-        id: read-matrix
-        run: echo "::set-output name=matrix::$(cat matrix.json)"
       - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
@@ -185,12 +192,11 @@ jobs:
 
   test-wheel:
     name: Test Wheel
-    needs: build-and-test-wheels
+    needs: [prepare-matrix, build-and-test-wheels]
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
-      matrix:
-        include: ${{fromJson(needs.job1.outputs.matrix)}}
+      matrix: ${{fromJson(needs.prepare-matrix.outputs.matrix)}}
 
     steps:
       - uses: actions/checkout@v4
