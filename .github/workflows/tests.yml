@@ -65,8 +65,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{fromJson(needs.prepare-matrix.outputs.matrix)}}
-    outputs:
-      success-${{ matrix.python-version }}-${{ matrix.os }}: ${{ steps.check-outcome.outputs.success }}
 
     steps:
       - uses: actions/checkout@v4
@@ -188,12 +186,13 @@ jobs:
           esac
           unzip -l cgal-*whl
           python -m twine check cgal-*whl
-
-      - name: Set build result
-        id: wheel-build-result
-        if: always()
-        run: echo "result=${{ job.status == 'success' }}" >> "$GITHUB_OUTPUT"
-
+      - name: Create status file
+        run: |
+          echo ${{ job.status }} > wheel-status.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: status-${{ matrix.python-version }}-${{ matrix.os }}
+          path: wheel-status.txt
       - uses: actions/upload-artifact@v4
         if: endsWith(matrix.cgal_branch, env.LATEST_CGAL_VERSION)
         with:
@@ -207,11 +206,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{fromJson(needs.prepare-matrix.outputs.matrix)}}
-    if: needs.build-and-test-wheels.outputs.matrix-result-${{ matrix.python-version }}-${{ matrix.os }} == 'true'
 
     steps:
       - uses: actions/checkout@v4
 
+      - name: Download status artifact
+        if: always()
+        uses: actions/download-artifact@v3
+        with:
+          name: status-${{ matrix.python-version }}-${{ matrix.os }}
+
+      - name: Check wheel build status
+        if: always()
+        id: check-status
+        run: |
+          if [ -f wheel-status.txt ] && grep -q 'success' wheel-status.txt; then
+            echo "::set-output name=status::success"
+          else
+            echo "::set-output name=status::failure"
+          fi
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
