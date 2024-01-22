@@ -1,5 +1,5 @@
 {
-    "cgal_branch": ["v5.6", "master"],
+    "cgal_branch": ["master"],
     "python-version": ["3.8", "3.9"],
-    "os": ["ubuntu-latest", "macos-latest"]
+    "os": ["ubuntu-latest"]
 }
