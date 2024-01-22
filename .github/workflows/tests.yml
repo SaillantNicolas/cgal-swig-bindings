@@ -210,7 +210,6 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          path: dist
           name: wheel-${{ matrix.os }}-${{ matrix.cgal_branch }}-${{ matrix.python-version }}
           merge-multiple: true
 
@@ -223,7 +222,7 @@ jobs:
                       ;;
             *) source cgal_venv/bin/activate
           esac
-          python -m pip install dist/cgal-*.whl
+          python -m pip install cgal-*.whl
           cd examples/python
           for i in *.py; do
             python $i
