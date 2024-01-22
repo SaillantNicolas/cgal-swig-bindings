@@ -181,6 +181,7 @@ jobs:
     name: Test Wheel
     needs: [prepare-matrix, build-and-test-wheels]
     runs-on: ${{ matrix.os }}
+    if: always()
     strategy:
       fail-fast: false
       matrix: ${{fromJson(needs.prepare-matrix.outputs.matrix)}}
