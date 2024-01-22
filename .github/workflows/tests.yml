@@ -203,8 +203,6 @@ jobs:
       fail-fast: false
       matrix: ${{fromJson(needs.prepare-matrix.outputs.matrix)}}
     steps:
-      - uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -240,7 +238,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: dist
-          name: wheel-*-${{ env.LATEST_CGAL_VERSION }}-*
+          name: wheel-*-v${{ env.LATEST_CGAL_VERSION }}-*
           merge-multiple: true
       - run: ls -l dist
       #- name: upload to TestPyPI
