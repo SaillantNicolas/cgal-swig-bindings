@@ -205,7 +205,7 @@ jobs:
                       ;;
             *) source cgal_venv/bin/activate
           esac
-          python -m pip install cgal-*.whl
+          python -m pip install dist/cgal-*.whl
           cd examples/python
           for i in *.py; do
             python $i
