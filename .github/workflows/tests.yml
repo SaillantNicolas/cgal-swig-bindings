@@ -1,4 +1,5 @@
 name: CI Tests
+
 on:
   push:
     branches:
@@ -7,8 +8,10 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "0 2 * * 0"
+
 env:
   LATEST_CGAL_VERSION: '5.6'
+
 jobs:
   prepare-matrix:
     name: Prepare Matrix
@@ -17,12 +20,14 @@ jobs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v4
+
       - name: Set matrix output
         id: set-matrix
         run: |
           MATRIX_JSON=$(jq -c . < .github/workflows/matrix.json)
           echo "MATRIX_JSON=${MATRIX_JSON}" >> $GITHUB_ENV
           echo "matrix=${MATRIX_JSON}" >> $GITHUB_OUTPUT
+
   sdist:
     name: Create Source Distribution
     runs-on: ubuntu-latest
@@ -30,13 +35,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
+
       - name: Install Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
       - name: Upgrade pip
         run: |
           python3 -m pip install --upgrade pip
+
       - name: Create Source Distribution
         run: |
           pip install setuptools wheel twine
@@ -46,10 +54,12 @@ jobs:
           CGAL_PYTHON_MODULE_VERSION=$CGAL_VERSION-$CGAL_SWIG_BINDINGS_VERSION
           export CGAL_PYTHON_MODULE_VERSION
           python3 setup.py sdist
+
       - uses: actions/upload-artifact@v4
         with:
           name: sdist
           path: dist/*.tar.gz
+
   build-and-test-wheels:
     name: Wheel
     needs: prepare-matrix
@@ -61,12 +71,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
+
       - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
           environment-file: .integration/conda-env-test.yml
           activate-environment: test
+
       - name: Display Python version
         shell: bash -l {0}
         run: |
@@ -80,10 +92,12 @@ jobs:
       #   uses: actions/setup-java@v1
       #   with:
       #     java-version: 1.8
+
       # - name: Install dependencies
       #   shell: bash -l {0}
       #   run: |
       #     $CONDA/bin/conda install -n test -y -c conda-forge 'boost-cpp>=1.77' bzip2 zlib eigen mpfr mpir tbb numpy wheel twine swig
+
       - name: pycodestyle
         shell: bash -l {0}
         env:
@@ -91,6 +105,7 @@ jobs:
           PYCODESTYLE_CONVENTIONS: "--max-line-length=120"
         run: |
           pycodestyle --show-source --show-pep8 $PYCODESTYLE_CONVENTIONS $CGAL_PYTHON_EXAMPLES || pycodestyle --statistics $PYCODESTYLE_CONVENTIONS -qq $CGAL_PYTHON_EXAMPLES
+
       - name: Install CGAL
         shell: bash -l {0}
         run: |
@@ -104,6 +119,7 @@ jobs:
           cd ..
           rm -rf cgal
           popd
+
       - name: Install LASTools
         shell: bash -l {0}
         run: |
@@ -123,6 +139,7 @@ jobs:
           [ -f $HOME/.local/lib/las.dll ] && mv $HOME/.local/lib/las.dll $HOME/.local/bin/
           [ -f $HOME/.local/lib/liblas.dylib ] && install_name_tool -id '@rpath/liblas.dylib' $HOME/.local/lib/liblas.dylib
           popd
+
       - name: Build local wheel
         shell: bash -l {0}
         run: |
@@ -177,25 +194,29 @@ jobs:
         with:
           name: wheel-${{ matrix.os }}-${{ matrix.cgal_branch }}-${{ matrix.python-version }}
           path: cgal-*.whl
+
   test-wheel:
     name: Test Wheel
     needs: [prepare-matrix, build-and-test-wheels]
     runs-on: ${{ matrix.os }}
-    if: always()
+    if: success()
     strategy:
       fail-fast: false
       matrix: ${{fromJson(needs.prepare-matrix.outputs.matrix)}}
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
+
       - uses: actions/download-artifact@v4
         with:
           path: dist
           name: wheel-${{ matrix.os }}-${{ matrix.cgal_branch }}-${{ matrix.python-version }}
           merge-multiple: true
+
       - name: Install Wheel and Test
         run: |
           set -ex
@@ -210,6 +231,7 @@ jobs:
           for i in *.py; do
             python $i
           done
+
   upload:
     name: Upload to PyPI
     runs-on: ubuntu-latest
@@ -219,6 +241,7 @@ jobs:
         with:
           path: dist
           merge-multiple: true
+
       - name: upload to TestPyPI
         if: github.event_name == 'push' && github.ref_name == 'main'
         env:
@@ -227,6 +250,7 @@ jobs:
         run: |
           pip install  twine
           python3 -m twine upload --verbose --repository testpypi dist/*
+
       - name: upload to PyPI
         if: github.event_name == 'push' && github.ref_name == 'main'
         env:
