@@ -65,6 +65,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{fromJson(needs.prepare-matrix.outputs.matrix)}}
+    outputs:
+      success-${{ matrix.python-version }}-${{ matrix.os }}: ${{ steps.check-outcome.outputs.success }}
 
     steps:
       - uses: actions/checkout@v4
@@ -187,6 +189,11 @@ jobs:
           unzip -l cgal-*whl
           python -m twine check cgal-*whl
 
+      - name: Set build result
+        id: wheel-build-result
+        if: always()
+        run: echo "result=${{ job.status == 'success' }}" >> "$GITHUB_OUTPUT"
+
       - uses: actions/upload-artifact@v4
         if: endsWith(matrix.cgal_branch, env.LATEST_CGAL_VERSION)
         with:
@@ -200,6 +207,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{fromJson(needs.prepare-matrix.outputs.matrix)}}
+    if: needs.build-and-test-wheels.outputs.matrix-result-${{ matrix.python-version }}-${{ matrix.os }} == 'true'
 
     steps:
       - uses: actions/checkout@v4
