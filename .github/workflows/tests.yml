@@ -11,6 +11,7 @@ on:
 
 env:
   LATEST_CGAL_VERSION: '5.6'
+  ARTIFACT_PATTERN: "wheel-*${{ env.LATEST_CGAL_VERSION }}-*"
 
 jobs:
   prepare-matrix:
@@ -234,11 +235,19 @@ jobs:
     needs: [sdist, build-and-test-wheels, test-wheel]
     if: always()
     steps:
-      - uses: actions/download-artifact@v4
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
         with:
-          path: dist
-          name: wheel-*-v${{ env.LATEST_CGAL_VERSION }}-*
-          merge-multiple: true
+          name: cgal-wheels
+          path: ./wheels
+          
+      - run: |
+          mkdir dist 
+          for artifact in ./wheels/*; do
+            if [[ $artifact =~ $ARTIFACT_PATTERN ]]; then
+              cp "$artifact" "dist/$(basename $artifact)"
+            fi
+          done
       - run: ls -l dist
       #- name: upload to TestPyPI
       #  if: github.event_name == 'push' && github.ref_name == 'main'
