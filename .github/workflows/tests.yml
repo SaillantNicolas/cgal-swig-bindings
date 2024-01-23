@@ -243,18 +243,13 @@ jobs:
           path: ./wheels
           
       - run: |
-          ARTIFACT_PATTERN="wheel-*v${{ env.LATEST_CGAL_VERSION }}-*"
-          echo "ARTIFACT_PATTERN: $ARTIFACT_PATTERN"
           mkdir -p dist
-          echo "List"
-          ls -l ./wheels/
           for artifact in ./wheels/*; do
-            echo "artefact: $artifact"
-            if [[ $artifact =~ $ARTIFACT_PATTERN ]]; then
-              echo "Cp artefact: $artifact"
-              cp "$artifact" "dist/$(basename "$artifact")"
+            if [[ "$artifact" == *"wheel-*-v${{ env.LATEST_CGAL_VERSION }}-*"* ]]; then
+              mv "$artifact" "./dist/"
             fi
           done
+  
       - run: ls dist
       #- name: upload to TestPyPI
       #  if: github.event_name == 'push' && github.ref_name == 'main'
