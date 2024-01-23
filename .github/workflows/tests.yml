@@ -243,7 +243,7 @@ jobs:
           path: ./wheels
           
       - run: |
-          ARTIFACT_PATTERN="wheel-v*${{ env.LATEST_CGAL_VERSION }}-*"
+          ARTIFACT_PATTERN="wheel-*v${{ env.LATEST_CGAL_VERSION }}-*"
           echo "ARTIFACT_PATTERN: $ARTIFACT_PATTERN"
           mkdir -p dist
           echo "List"
