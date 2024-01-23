@@ -243,12 +243,16 @@ jobs:
           path: ./wheels
           
       - run: |
-          mkdir dist 
-          ARTIFACT_PATTERN="wheel-*v${{ env.LATEST_CGAL_VERSION }}*-"
+          ARTIFACT_PATTERN="wheel-v*${{ env.LATEST_CGAL_VERSION }}-*"
+          echo "ARTIFACT_PATTERN: $ARTIFACT_PATTERN"
+          mkdir -p dist
+          echo "List"
+          ls -l ./wheels/
           for artifact in ./wheels/*; do
+            echo "artefact: $artifact"
             if [[ $artifact =~ $ARTIFACT_PATTERN ]]; then
-              echo $artifact
-              cp "$artifact" "dist/$(basename $artifact)"
+              echo "Cp artefact: $artifact"
+              cp "$artifact" "dist/$(basename "$artifact")"
             fi
           done
       - run: ls dist
