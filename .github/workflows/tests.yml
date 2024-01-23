@@ -245,13 +245,13 @@ jobs:
       - run: |
           mkdir dist 
           ARTIFACT_PATTERN="wheel-*v${{ env.LATEST_CGAL_VERSION }}*-"
-          ls ./wheels
+          echo $ARTIFACT_PATTERN
           for artifact in ./wheels/*; do
+            echo $artifact
             if [[ $artifact =~ $ARTIFACT_PATTERN ]]; then
               cp "$artifact" "dist/$(basename $artifact)"
             fi
           done
-          ls
       - run: ls dist
       #- name: upload to TestPyPI
       #  if: github.event_name == 'push' && github.ref_name == 'main'
