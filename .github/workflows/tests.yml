@@ -237,20 +237,36 @@ jobs:
     needs: [sdist, build-and-test-wheels, test-wheel]
     if: always()
     steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: ./wheels
-          
-      - run: |
-          mkdir -p dist
-          for artifact in ./wheels/*; do
-            if [[ "$artifact" == *"wheel-*-v${{ env.LATEST_CGAL_VERSION }}-*"* ]]; then
-              mv "$artifact" "./dist/"
-            fi
-          done
-  
-      - run: ls dist
+        - run: mkdir dist
+        - name: Download artifacts
+          uses: actions/github-script@v3
+          with:
+            script: |
+              const response = await octokit.actions.listWorkflowRuns({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                workflow_id: context.workflow.id,
+              });
+              const workflowRunId = response.data.workflow_runs[0].id;
+              const artifactsUrl = `https://api.github.com/repos/${context.repo.owner}/${context.repo.repo}/actions/runs/${workflowRunId}/artifacts`;
+              const artifactsResponse = await octokit.paginate(artifactsUrl, {
+                per_page: 100,
+              });
+              const matchingArtifacts = artifactsResponse.filter(
+                artifact =>
+                  artifact.name.startsWith('wheel-') &&
+                  artifact.name.includes(`v${{ env.LATEST_CGAL_VERSION }}`) &&
+                  artifact.name.includes('-*')
+              );
+              await octokit.rest.actions.downloadArtifacts({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                artifact_id: matchingArtifacts[0].id,
+                archive_format: 'zip',
+                path: 'dist',
+              });
+
+        - run: ls dist
       #- name: upload to TestPyPI
       #  if: github.event_name == 'push' && github.ref_name == 'main'
       #  env:
