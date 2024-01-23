@@ -238,13 +238,10 @@ jobs:
     if: always()
     steps:
         - run: mkdir dist
-        - run : ls
         - uses: actions/download-artifact@v4
         - run : |
-            ls
             cp -r *v${{ env.LATEST_CGAL_VERSION }}* dist/
-        - run: ls
-        - run: ls dist
+            ls dist
       #- name: upload to TestPyPI
       #  if: github.event_name == 'push' && github.ref_name == 'main'
       #  env:
