@@ -204,6 +204,8 @@ jobs:
       fail-fast: false
       matrix: ${{fromJson(needs.prepare-matrix.outputs.matrix)}}
     steps:
+      - uses: actions/checkout@v4
+      
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
