@@ -240,8 +240,6 @@ jobs:
         - run: mkdir dist
         - run : ls
         - uses: actions/download-artifact@v4
-          with:
-            name: wheel-${{ matrix.os }}-${{ matrix.cgal_branch }}-${{ matrix.python-version }}
         - run : |
             ls
             cp *v${{ env.LATEST_CGAL_VERSION }}* dist/
