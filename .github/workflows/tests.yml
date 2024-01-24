@@ -237,10 +237,10 @@ jobs:
     needs: [sdist, build-and-test-wheels, test-wheel]
     if: always()
     steps:
-        - run: mkdir dist
         - uses: actions/download-artifact@v4
         - run : |
-            cp -r *v${{ env.LATEST_CGAL_VERSION }}* dist/
+            mkdir dist
+            cp -r *v${{ env.LATEST_CGAL_VERSION }}*/*.whl dist/
             ls dist
       #- name: upload to TestPyPI
       #  if: github.event_name == 'push' && github.ref_name == 'main'
