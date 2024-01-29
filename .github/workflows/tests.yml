@@ -226,21 +226,16 @@ jobs:
         shell: bash -l {0}
         run: |
           set -ex
-          python --version
-          which python
-          ls /Library/Frameworks/Python.framework/Versions/
-          ls /Library/Frameworks/Python.framework/Versions/Current/
-          python -m venv cgal_venv
+          /Library/Frameworks/Python.framework/Versions/${{ matrix.python-version }}/bin/python3 -m venv cgal_venv
           case ${{ runner.os }} in
             Windows) cgal_venv/Scripts/activate
                       ;;
             *) source cgal_venv/bin/activate
           esac
-          python -m pip install -U pip
-          python -m pip install cgal-*.whl
+          /Library/Frameworks/Python.framework/Versions/${{ matrix.python-version }}/bin/python3 -m pip install cgal-*.whl
           cd examples/python
           for i in *.py; do
-            python $i
+            /Library/Frameworks/Python.framework/Versions/${{ matrix.python-version }}/bin/python3 $i
           done
 
   upload:
