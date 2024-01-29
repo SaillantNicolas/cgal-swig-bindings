@@ -226,6 +226,8 @@ jobs:
         shell: bash -l {0}
         run: |
           set -ex
+          python --version
+          which python
           python -m venv cgal_venv
           case ${{ runner.os }} in
             Windows) cgal_venv/Scripts/activate
