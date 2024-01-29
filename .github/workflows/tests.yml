@@ -221,9 +221,6 @@ jobs:
         with:
           name: wheel-${{ matrix.os }}-${{ matrix.cgal_branch }}-${{ matrix.python-version }}
           merge-multiple: true
-      - run: |
-          python --version
-          echo ${{ matrix.python-version }}
 
       - name: Install Wheel and Test
         shell: bash -l {0}
@@ -235,6 +232,7 @@ jobs:
                       ;;
             *) source cgal_venv/bin/activate
           esac
+          python -m pip install -U pip
           python -m pip install cgal-*.whl
           cd examples/python
           for i in *.py; do
