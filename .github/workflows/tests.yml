@@ -228,6 +228,8 @@ jobs:
           set -ex
           python --version
           which python
+          /Library/Frameworks/Python.framework/Versions/
+          ls /Library/Frameworks/Python.framework/Versions/Current/
           python -m venv cgal_venv
           case ${{ runner.os }} in
             Windows) cgal_venv/Scripts/activate
