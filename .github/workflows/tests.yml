@@ -216,7 +216,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - run : which python
 
       - uses: actions/download-artifact@v4
         with:
@@ -227,18 +226,16 @@ jobs:
         shell: bash -l {0}
         run: |
           set -ex
-          which python
-          ls /Library/Frameworks/Python.framework/Versions/
-          /Library/Frameworks/Python.framework/Versions/${{ matrix.python-version }}/bin/python3 -m venv cgal_venv
+          /Users/runner/hostedtoolcache/Python/${{ matrix.python-version }}*/x64/bin/python -m venv cgal_venv
           case ${{ runner.os }} in
             Windows) cgal_venv/Scripts/activate
                       ;;
             *) source cgal_venv/bin/activate
           esac
-          /Library/Frameworks/Python.framework/Versions/${{ matrix.python-version }}/bin/python3 -m pip install cgal-*.whl
+          /Users/runner/hostedtoolcache/Python/${{ matrix.python-version }}*/x64/bin/python -m pip install cgal-*.whl
           cd examples/python
           for i in *.py; do
-            /Library/Frameworks/Python.framework/Versions/${{ matrix.python-version }}/bin/python3 $i
+            /Users/runner/hostedtoolcache/Python/${{ matrix.python-version }}*/x64/bin/python $i
           done
 
   upload:
