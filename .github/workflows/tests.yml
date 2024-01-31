@@ -230,7 +230,7 @@ jobs:
           case ${{ runner.os }} in
             Windows) cgal_venv/Scripts/activate
             ${pythonLocation}/python -m pip install delvewheel
-            delvewheel repair cgal-*.whl -w ./wheelhouse
+            delvewheel repair cgal-*.whl
             ${pythonLocation}/python -m pip install ./wheelhouse/cgal-*.whl
                       ;;
             *) source cgal_venv/bin/activate
