@@ -191,7 +191,10 @@ jobs:
               export CXXFLAGS
               export LIB
               export CGAL_DIR
-              python -m pip wheel -v .
+              ${pythonLocation}/python -m pip install delvewheel
+              delvewheel repair -w fixed_wheel cgal-*.whl
+              rm cgal-*.whl
+              cp fixed_wheel/*.whl .
               ;;
           esac
           unzip -l cgal-*whl
@@ -229,14 +232,11 @@ jobs:
           ${pythonLocation}/python -m venv cgal_venv
           case ${{ runner.os }} in
             Windows) cgal_venv/Scripts/activate
-            ${pythonLocation}/python -m pip install delvewheel
-            delvewheel repair cgal-*.whl
-            ${pythonLocation}/python -m pip install ./wheelhouse/cgal-*.whl
                       ;;
             *) source cgal_venv/bin/activate
-              ${pythonLocation}/python -m pip install cgal-*.whl
                       ;;
           esac
+          ${pythonLocation}/python -m pip install cgal-*.whl
           cd examples/python
           for i in *.py; do
             ${pythonLocation}/python $i
