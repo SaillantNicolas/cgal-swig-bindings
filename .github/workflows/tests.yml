@@ -191,7 +191,7 @@ jobs:
               export CXXFLAGS
               export LIB
               export CGAL_DIR
-              ${pythonLocation}/python -m pip install delvewheel
+              python -m pip install delvewheel
               delvewheel repair -w fixed_wheel cgal-*.whl
               rm cgal-*.whl
               cp fixed_wheel/*.whl .
