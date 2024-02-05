@@ -175,6 +175,7 @@ jobs:
               export CGAL_DIR
               python -m pip wheel -v .
               python -m pip install delvewheel
+              dir
               delvewheel repair cgal-*.whl -w fixed_wheel
               del /F cgal-*.whl
               move fixed_wheel\*.whl .
