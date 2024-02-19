@@ -188,6 +188,10 @@ jobs:
         shell: bash -l {0}
         if: runner.os == 'Windows'
         run: pip install delvewheel
+      - name: Search for a specific file
+        run: |
+          dir /s /b | findstr "cgal_aabb_tree_cpp.dll"
+          dir /s /b | findstr "CGAL_AABB_tree_cpp.dll"
       - name: Repair wheel with delvewheel
         shell: bash -l {0}
         if: runner.os == 'Windows'
