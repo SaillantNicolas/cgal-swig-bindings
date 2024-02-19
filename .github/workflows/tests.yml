@@ -184,9 +184,6 @@ jobs:
           esac
           unzip -l cgal-*whl
           python -m twine check cgal-*whl
-      - name: List DLLs in Conda env
-        shell: bash -l {0}
-        run: ls D:/Min
       - name: Install delvewheel
         shell: bash -l {0}
         if: runner.os == 'Windows'
