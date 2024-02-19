@@ -188,17 +188,11 @@ jobs:
         shell: bash -l {0}
         if: runner.os == 'Windows'
         run: pip install delvewheel
-      - name: Find cgal_aabb_tree_cpp.dll after wheel installation
-        shell: bash -l {0}
-        run: |
-          find . -name cgal_aabb_tree_cpp.dll
-      - name: List binary dependencies with delvewheel
-        run: delvewheel list cgal-*.whl
       - name: Repair wheel with delvewheel
         shell: bash -l {0}
         if: runner.os == 'Windows'
         run: |
-          delvewheel repair -v cgal-*.whl -w fixed_wheels
+          delvewheel repair -vv cgal-*.whl -w fixed_wheels
           rm cgal-*.whl
           mv fixed_wheels/*.whl .
       - uses: actions/upload-artifact@v4
