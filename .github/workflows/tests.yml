@@ -188,13 +188,11 @@ jobs:
         shell: bash -l {0}
         if: runner.os == 'Windows'
         run: pip install delvewheel
-      - name: Search for a specific file
-        run: cmd /c "dir /s /b | findstr \"cgal_aabb_tree_cpp.dll\""
       - name: Repair wheel with delvewheel
         shell: bash -l {0}
         if: runner.os == 'Windows'
         run: |
-          delvewheel repair -vv cgal-*.whl -w fixed_wheels
+          delvewheel repair -vv --ignore-in-wheel cgal-*.whl -w fixed_wheels
           rm cgal-*.whl
           mv fixed_wheels/*.whl .
       - uses: actions/upload-artifact@v4
